@@ -1,0 +1,5 @@
+/node_modules 
+/cna-next/node_modules
+/cna-node-express/node_modules
+~*
+*.docx
