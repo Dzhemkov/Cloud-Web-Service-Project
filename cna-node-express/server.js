@@ -10,7 +10,7 @@ app.listen(port, () => console.log(`Sample app is listening on port ${port}`));
 
 const Sequelize = require('sequelize');
 const db = 'cnainventory';
-const sequelize = new Sequelize(db, 'root', '*******************', {
+const sequelize = new Sequelize(db, 'root', 'dima54msQL@', {
     dialect: 'mysql', host: 'localhost', port: 3306
 })
 
@@ -58,5 +58,16 @@ app.get('/inventory/:id', async (req, res) => {
     }catch(error){
         console.error(error);
         res.status(500).send('Error fetching inventory record');
+    }
+});
+
+//add a route that accepts HTTP GET requests to fetch the entire inventory
+app.get("/inventory", async (req, res) => {
+    console.log(`Accessing /inventory`);
+    try{
+        const inventory = await Inventory.findAll();
+        res.json({inventory});
+    }catch(error){
+        console.error(error);
     }
 });
