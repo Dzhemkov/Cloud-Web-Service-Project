@@ -1,14 +1,19 @@
 FROM node:18
-# create app directory
+
 WORKDIR /src
-# copy package.json and package-lock.json
-COPY package*.json /src/
-# install npm dependencies
+
+# Copy package files and install dependencies
+COPY package*.json ./
 ENV NODE_ENV=production
 RUN npm ci --only=production
-# copy app source code
-COPY . /src
-# expose port 8080
+
+# Copy app source
+COPY server.js ./
+COPY config/ ./config/
+COPY .env ./
+
+# Expose port
 EXPOSE 8080
-# start the app
+
+# Start app
 CMD ["node", "server.js"]

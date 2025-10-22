@@ -1,4 +1,19 @@
 //Code to allow Express.js application to connect to the cnainventory db
+//require('dotenv').config();
+
+const fs = require('fs');
+const dotenv = require('dotenv');
+
+if (fs.existsSync('.env.local')) {
+    dotenv.config({ path: '.env.local' });
+} else {
+    dotenv.config();
+}
+
+//dotenv.config({ path: '.env' }) || dotenv.config({ path: '.env.local' });//for Docker
+//dotenv.config({ path: '.env.local' }) || dotenv.config({ path: '.env' });//for Local
+
+const dbConfig = require('./config/db.config.js');
 const express = require('express');
 
 const port = process.env.PORT || 8080;
@@ -8,11 +23,27 @@ app.use(express.json());
 
 app.listen(port, () => console.log(`Sample app is listening on port ${port}`));
 
+console.log(`${dbConfig.PASSWORD}`)
+console.log(`${dbConfig.HOST}`)
+console.log(`${process.env.PORT}`)
+console.log(dbConfig)
+
 const Sequelize = require('sequelize');
-const db = 'cnainventory';
-const sequelize = new Sequelize(db, 'root', 'dima54msQL@', {
-    dialect: 'mysql', host: 'localhost', port: 3306
+const db = dbConfig.DB;
+const dbUser = dbConfig.USER;
+const dbPassword = dbConfig.PASSWORD;
+const sequelize = new Sequelize(db, dbUser, dbPassword, {
+    dialect: 'mysql',//dbConfig.DIALECT, 
+    host: dbConfig.HOST,//'host.docker.internal' //'127.0.0.1' //'localhost', 
+    port: dbConfig.PORT,
+    pool: dbConfig.POOL,
+    operatorAliases: false
 })
+
+
+sequelize.authenticate()
+  .then(() => console.log(`✅ Connected to MySQL at ${dbConfig.HOST}:${dbConfig.PORT}`))
+  .catch(err => console.error('❌ Connection error:', err));
 
 //map the data objects in the Express.js code to the data records in the database table
 const Inventory = sequelize.define(
