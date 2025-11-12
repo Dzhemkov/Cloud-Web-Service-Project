@@ -3,3 +3,4 @@
 /cna-node-express/node_modules
 ~*
 *.docx
+.env*
